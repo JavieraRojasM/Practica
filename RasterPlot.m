@@ -1,4 +1,4 @@
-% Preprocesamiento de datos
+%% Rasterplot
 clear
 close all
 

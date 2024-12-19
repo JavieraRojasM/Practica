@@ -1,0 +1,69 @@
+%% Promedio de spikes
+clear
+close all
+
+% Se cargan los datos
+%[archivo, path] = uigetfile;
+%rutaPrincipal = fullfile(path, archivo);
+rutaPrincipal = "C:\Users\javie\OneDrive\Escritorio\Datos";
+
+% Obtener las subcarpetas dentro de la carpeta principal
+subcarpetas = dir(rutaPrincipal);
+subcarpetas = subcarpetas(~ismember({subcarpetas.name}, {'.', '..'})); % Excluir '.' y '..'
+
+
+% Iterar sobre las subcarpetas
+for i = 1:length(subcarpetas)
+    % Ruta de la subcarpeta actual
+    rutaSubcarpeta = fullfile(rutaPrincipal, subcarpetas(i).name);
+    
+    % Obtener los archivos de la subcarpeta actual
+    archivos = dir(fullfile(rutaSubcarpeta, '*.mat'));
+
+    % Nombre de la carpeta en que estoy trabajando
+    nombres(i) = string(subcarpetas(i).name)
+
+    total_spks = zeros(1, length(archivos));
+
+    % Iterar sobre los archivos de la subcarpeta
+    for j = 1:length(archivos)
+        % Ruta completa del archivo
+        rutaArchivo = fullfile(rutaSubcarpeta, archivos(j).name);
+        % Cargar o procesar el archivo
+        datos = load(rutaArchivo); % Ejemplo: cargar archivo .mat
+
+        spikesstruct = datos.spks;
+
+        total_spks_archivo = size(spikesstruct,1);
+        
+        total_spks(j) = total_spks_archivo;
+
+    end
+
+    mean_spks(i) = mean(total_spks);
+
+    % Desviación estándar por grupo
+    std_deviation(i) = std(total_spks);
+
+    std_error(i) = std_deviation(i) / sqrt(length(total_spks));
+end
+
+% Grupos (eje x)
+grupos = 1:length(subcarpetas);
+
+% Gráfico de barras
+figure;
+bar(grupos, mean_spks, 'FaceColor', [0.2, 0.6, 0.8]);
+
+% Añadir líneas de error
+hold on;
+errorbar(grupos, mean_spks, std_error, 'k.', 'LineWidth', 1.5);
+
+% Configuración del gráfico
+xlabel('Age group');
+ylabel('Average number of spikes');
+title('Average number of spikes by age');
+xticks(grupos); 
+xticklabels(nombres); 
+grid on
+hold off;
