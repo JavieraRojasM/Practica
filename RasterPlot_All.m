@@ -1,85 +1,86 @@
-%% Rasterplot de todos
+%% Individual RasterPlot of all files
 clear
 close all
 
-% Se cargan los datos
-%[archivo, path] = uigetfile;
-% main_folder = fullfile(path, archivo);
+% Choose of the main folder
+%[file, path] = uigetfile;
+%main_folder = fullfile(path, file);
 
 main_folder = "C:\Users\javie\OneDrive\Escritorio\Datos";
 
-% Obtener las subcarpetas dentro de la carpeta principal
+% Get the subfolders within the main folder
 folder = dir(main_folder);
 folder = folder(~ismember({folder.name}, {'.', '..'})); % Excluir '.' y '..'
 
+% Initiate the count and vectors
 file_count = 0;
 names = [];
 total_spks = [];
 
-% El paso temporal tomado es 10^-i
-%Elegir i:
+% The time step is 10^-i
+% Select i:
 i = 1;
-
-% Se calcula el paso temporal
+% Time step
 dt = 1*10^-i; %[s]
 
-% Iterar sobre las subcarpetas
-
+% Iterate over the subfolders inside the main folder
 for f = 1:length(folder)
-    % Ruta de la subcarpeta actual
+    % Subfolder path
     folder_path = fullfile(main_folder, folder(f).name);
     
-    % Obtener los archivos de la subcarpeta actual
+    % Get the files within the subfolders
     file = dir(fullfile(folder_path, '*.mat'));
 
-    % Iterar sobre los archivos de la subcarpeta
+    % Iterate over the files inside the subfolder
     for a = 1:length(file)
-        % Ruta completa del archivo
+        % File path
         file_path = fullfile(folder_path, file(a).name);
 
-        % Nombre de la carpeta en que estoy trabajando
+        % Folder and file name
         name = string(folder(f).name) + ", " + string(file(a).name);
         newname = erase(name, ".mat");
         
-        % Cargar el archivo
+        % Load the file
         data = load(file_path);
         data_spk = data.spks;
         data_maxtime = data.file_length;
         
-        % Marcador de inicio de estimulo
+        % Get the time of application of the stimulus
         stimtime = data.stim_time;
-        stim = sscanf(stimtime, '%d')*60;
+        stim = sscanf(stimtime, '%d')*60; % Minute to seconds conversion
         
+        % Get the spikes matrix
         matriz_spks = RasterPlotFx(data_spk, data_maxtime, dt);
 
+        % Add a file in the file count
         file_count = file_count + 1;
-        %% Raster Plot
-        
+
+        %% Plot
         figure(file_count);
-        hold on 
-        n_neuronas = data_spk(end,1);
-        for n = 1:n_neuronas
-            indice = (find(matriz_spks(n,:)));
-            x = indice*dt;
+        hold on;
+
+        n_neuron = data_spk(end,1);
+        for n = 1:n_neuron
+            index = (find(matriz_spks(n,:)));
+            x = index*dt;
             y = ones(1, size(x,2))* n;
             scatter(x, y, 5, 'filled', 'MarkerFaceColor', [0.1, 0.1, 0.6]);
         end
         
-        xlabel('Tiempo (s)');        
+        xlabel('Time (s)');        
         
-        ylim([0.5, (n_neuronas + 0.5)])
-        yticks(0:5:n_neuronas+1);
+        ylim([0.5, (n_neuron + 0.5)])
+        yticks(0:5:n_neuron+1);
         ylabel('Nº Neurona');
         
-        % Marcador de inicio de estimulo
+        % Stimulus start marker
         x_line = [stim, stim]; 
-        y_line = [0.5, n_neuronas + 0.5]; 
+        y_line = [0.5, n_neuron + 0.5]; 
         plot(x_line, y_line, 'r-', 'LineWidth', 2);
         text(stim, 0, 'stimulus', 'HorizontalAlignment', 'center', 'VerticalAlignment', 'top', 'Color', 'red', 'FontSize', 8);
         title(sprintf('Raster Plot of %s with dt = 1 * 10^{-%d}', newname, i));
-        hold off
+        hold off;
 
     end
-
 end
 
