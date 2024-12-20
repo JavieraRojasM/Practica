@@ -4,7 +4,7 @@ close all
 
 % Se cargan los datos
 %[archivo, path] = uigetfile;
-% data_mat = fullfile(path, archivo);
+% main_folder = fullfile(path, archivo);
 
 main_folder = "C:\Users\javie\OneDrive\Escritorio\Datos";
 
@@ -23,6 +23,9 @@ i = 1;
 % Se calcula el paso temporal
 dt = 1*10^-i; %[s]
 
+% Crear una figura
+figure;
+
 % Iterar sobre las subcarpetas
 
 for f = 1:length(folder)
@@ -38,8 +41,8 @@ for f = 1:length(folder)
         file_path = fullfile(folder_path, file(a).name);
 
         % Nombre de la carpeta en que estoy trabajando
-        name = string(folder(f).name) + ", " + string(file(a).name);
-        newname = erase(name, ".mat");
+        [~, name, ~] = fileparts(file(a).name);
+        newname = string(folder(f).name) + ", " + name;
         
         % Cargar el archivo
         data = load(file_path);
@@ -54,16 +57,14 @@ for f = 1:length(folder)
 
         file_count = file_count + 1;
         %% Raster Plot
-        
-        
-        
+        subplot(2, 3, file_count);
+        hold on;
+
         n_neuronas = data_spk(end,1);
         for n = 1:n_neuronas
-            
             indice = (find(matriz_spks(n,:)));
             x = indice*dt;
             y = ones(1, size(x,2))* n;
-            subplot(1, 1, 1);
             scatter(x, y, 5, 'filled', 'MarkerFaceColor', [0.1, 0.1, 0.6]);
         end
         
@@ -80,8 +81,8 @@ for f = 1:length(folder)
         text(stim, 0, 'stimulus', 'HorizontalAlignment', 'center', 'VerticalAlignment', 'top', 'Color', 'red', 'FontSize', 8);
         title(sprintf('Raster Plot of %s with dt = 1 * 10^{-%d}', newname, i));
 
+        hold off;
+
     end
 
 end
-
-hold off

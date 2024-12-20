@@ -4,7 +4,7 @@ close all
 
 % Se cargan los datos
 %[archivo, path] = uigetfile;
-% data_mat = fullfile(path, archivo);
+% main_folder = fullfile(path, archivo);
 
 main_folder = "C:\Users\javie\OneDrive\Escritorio\Datos";
 
