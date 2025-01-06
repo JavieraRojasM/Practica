@@ -19,7 +19,7 @@ total_spks = [];
 
 % The time step is 10^-i
 % Select i:
-i = 1;
+i = 3;
 % Time step
 dt = 1*10^-i; %[s]
 
