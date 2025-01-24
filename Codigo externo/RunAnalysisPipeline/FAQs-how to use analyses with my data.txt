@@ -1,0 +1,47 @@
+(1) How do I use a different measure of pair-wise correlation?
+(2) How do I chose the time-scale for representing each spike?
+(3) How do I visualise the output?
+(4) How do I add more models to the "fit-space"?
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+(1) How do I use a different measure of pair-wise similarity between my time-series?
+
+The top-level helper function consensus_cluster_spike_train_binless() includes options for using either rectified Pearson's correlation coefficient or the cosine similarity between each pair. To use a different pair-wise metric, there are two options:
+Option 1: implement the metric within consensus_cluster_spike_train_binless(). The sub-function constructS() contains the pair-wise metrics, and uses the selected metric to build the similarity matrix.
+
+Option 2: construct the similarity matrix yourself using the metric (e.g. by using MATLAB's pdist() function with a function for your pair-wise metric), then pass directly to the clustering function allevsplitConTransitive().
+
+With either option there are two necessary conditions to observe:
+(I) The consensus community detection algorithm is based on interpreting a similarity matrix as a weighted network. Consequently the pair-wise measure used must return the similarity between a pair of time-series: higher values indicate greater similarity, and only positive values allowed. Consequently distance metrics should be inverted; and correlation metrics should be rectified (all entries below zero set to zero) or signs removed (so that only the magnitude is used) depending on the interpretation of negative correlations in your dataset.
+
+(II) The similarity matrix must have zeros on the diagonal: self-similarity is set to zero as the community detection algorithms expect no self-loops in the network.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+(2) How do I chose the time-scale for representing each spike?
+
+The time-scale is the scale parameter for the function convolved with each spike, which determines the temporal-precision of pairwise correlation (e.g. a Gaussian with a standard deviation of 10 ms is detecting highly precise spike-to-spike correlations; one with a standard deviation of 1 s is detecting large-scale spike train correlations such as coincident bursting).
+
+Choosing the time-scale can be done either using knowledge of the recorded neural system, or the algorithm can chose for you:
+
+(I) Knowledge use: In the accompanying paper (Bruno et al 2014) we studied the neural activity in the Aplysia’s locomotion network during crawling, and thus expected that the oscillatory neural activity driving crawling would naturally set a time-scale for looking at correlations. Thus we used a time-domain method - correlating network vectors - that would detect the dominant time-scale of the whole network.
+
+In the frequency-domain, options include using mean power spectra or coherence to pick the dominant frequency of change in the network and use that to set the time-scale.
+
+(II) Automatic choice: the use of modularity Q allows for a completely unsupervised approach. The top-level helper function X allows the user to specify a set of time-scales to be used by the algorithm, and a complete clustering is returned for each. One can then choose the appropriate clustering as the time-scale that returned the highest value of Q. We showed in Humphries (2011, J Neurosci, 31, 2321) that this automated time-scale scanning was able to track ensembles across fluctuating oscillations in cortex.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+(3) How do I visualise the output of the consensus community detection?
+
+In the Consensus Community Detection toolbox we supply function plot_clusters() to visualise the output from the algorithm. 
+
+The helper function sortbysimilarity() is very useful here: for given clustering, it will sort group ID tags into the order of the groups' mean intra-group similarity (ID#1 = most similar). When passed to plot_clusters() as an optional argument, this sorted group list will allow the function to plot the groups in order of similarity from top (most similar) to bottom (least similar).
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+(4) How do I add more models to the "fit-space"?
+
+The function fitMLEdistribution() contains the code for choosing, fitting, and assessing the model fits to a given distribution of a variable. It contains wide range of distribution models, including some not used in the Bruno et al 2014 paper. See the notes in that function for how to include other models.
+
+
+
+
+

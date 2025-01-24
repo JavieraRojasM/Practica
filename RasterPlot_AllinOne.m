@@ -2,6 +2,8 @@
 clear
 close all
 
+addpath('Functions');
+
 % Choose of the main folder
 %[file, path] = uigetfile;
 %main_folder = fullfile(path, file);

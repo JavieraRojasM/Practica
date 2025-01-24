@@ -1,6 +1,9 @@
-%% Rasterplot of all files in one figure
+%% Average spike for neuron of all files in one figure
 clear
 close all
+
+addpath('Functions');
+
 
 % Choose of the main folder
 %[file, path] = uigetfile;
@@ -14,6 +17,8 @@ folder = folder(~ismember({folder.name}, {'.', '..'})); % Excluir '.' y '..'
 
 % Initiate the count and vectors
 file_count = 0;
+juvenile_count = 0;
+old_count = 0;
 names = [];
 total_spks = [];
 
@@ -24,43 +29,10 @@ i = 1;
 dt = 1*10^-i; %[s]
 
 
-min_stim = 120000;
-min_max_time = 10000000;
+min_time = GetMinTime(folder, main_folder);
+min_stim = min_time(1,1);
+min_total = min_time(1,2);
 
-% Iterate over the subfolders inside the main folder
-for f = 1:length(folder)
-    % Subfolder path
-    folder_path = fullfile(main_folder, folder(f).name);
-    
-    % Get the files within the subfolders
-    file = dir(fullfile(folder_path, '*.mat'));
-
-    % Iterate over the files inside the subfolder
-    for a = 1:length(file)
-        % File path
-        file_path = fullfile(folder_path, file(a).name);
-
-        % Load the file
-        data = load(file_path);
-        data_spk = data.spks;
-        data_maxtime = data.file_length;
-        
-        % Get the time of application of the stimulus
-        data_stimtime = data.stim_time;
-        stim = sscanf(data_stimtime, '%d')*60; % Minutes to seconds conversion 
-      
-        if stim < min_stim
-            min_stim = stim;
-        end
-
-        % Get the maximun time before the stimulus
-        max_time = sscanf(data_maxtime, '%d')*60; % Minutes to seconds conversion
-        time_befstim = max_time - stim;
-        if time_befstim < min_max_time
-            min_max_time = time_befstim;
-        end
-    end
-end
 
 % Create a figure
 figure;
@@ -89,6 +61,24 @@ for f = 1:length(folder)
         data_spk = data.spks;
         data_maxtime = data.file_length;
         
+        % Add a file in the file count
+        file_count = file_count + 1;
+
+        % Create color vector
+        if strcmp(folder(f).name, 'Juvenile')
+            % Variar tonos de celeste/azul en función de juvenile_count
+            base_color = [0, 0.1, 1]; % Color base para "juvenile"
+            variation = juvenile_count / 1.2; % Escala de variación (ajustable)
+            colors(file_count, :) = min(base_color + variation * [0.2, 0.3 0.5], 1); % Limitar a [0, 1]
+            juvenile_count = juvenile_count + 1;
+        elseif strcmp(folder(f).name, 'Old')
+            % Variar tonos de naranjo/rojo en función de old_count
+            base_color = [0.8, 0.4, 0.2]; % Color base para "old"
+            variation = old_count / 1.2; % Escala de variación (ajustable)
+            colors(file_count, :) = min(base_color + variation * [0.3, 0.2, 0.1], 1); % Limitar a [0, 1]
+            old_count = old_count + 1;
+        end
+
         % Get the time of application of the stimulus
         data_stimtime = data.stim_time;
         stim = sscanf(data_stimtime, '%d')*60; % Minutes to seconds conversion
@@ -96,56 +86,39 @@ for f = 1:length(folder)
         % Get the spikes matrix
         matrix_spks = RasterPlotFx(data_spk, data_maxtime, dt);
 
-        % Trim matrix spiks
-
-        % Add a file in the file count
-        file_count = file_count + 1;
-
-        total_time = -min_stim:dt:(min_max_time-dt);
-
-        % Initiate the average vector
-        average = zeros(1, size(total_time,2));
+        % Get the total duration of the experiment after the trim
+        total_time = -min_stim:dt:(min_total-dt);
         
-        % Trim of the matrix
-        
-        start = stim - min_stim;
-        endd = stim + min_max_time;
-           
-        matrix_spks(:, [(endd/dt +1):end]) = [];
-        size(matrix_spks);
-
-        matrix_spks(:, [1:(start/dt)]) = [];
-        size(matrix_spks);
-
-
-        for t = 1:size(matrix_spks,2)
-            average(1, t) = sum(matrix_spks(:,t)) / size(matrix_spks,1);
-        end
-
-        
-        
+        % Get the matrix with the percent of total spikes
+        AverageMatrix = AverageMatrixFx(min_stim, min_total, matrix_spks, dt, stim);
 
         %% Plot
-        y_smooth = movmean(average, 200); % smoothed points
+        y_smooth = movmean(AverageMatrix, 200); % smoothed points
         
         % Stimulus start marker
         x_line = [0, 0]; 
         y_line = [0, max(y_smooth)+0.02]; 
         plot(x_line, y_line, 'k--', 'LineWidth', 1);
         text(0, 0, 'stimulus', 'HorizontalAlignment', 'center', 'VerticalAlignment', 'top', 'Color', 'black', 'FontSize', 8);
-        
+             
+
         % Tendency line for spikes
-        h(end+1) = plot(total_time, y_smooth, 'LineWidth', 1); % Add tendency line
+        line_color = colors(file_count, :);
+        h(end+1) = plot(total_time, y_smooth, 'LineWidth', 1, 'Color', line_color); % Add tendency line
         hold on;
         legendEntries{end+1} = [newname];
-        legend(h, legendEntries)
+        legend(h, legendEntries)    
 
-        % Plot and axis tittles
-        ylabel('Total spikes / total neurons');
-        xlabel('Time (s)');
-        title(sprintf('Average spike for Neuron with dt = 1 * 10^{-%d}', i));
-        grid on
+
     end
 end
+   
+
+% Plot and axis tittles
+ylabel('Total spikes / total neurons');
+xlabel('Time (s)');
+title(sprintf('Average spike for Neuron with dt = 1 * 10^{-%d}', i));
+grid on
+
 
 hold off
