@@ -1,0 +1,123 @@
+%% Types Of Neurons
+clear
+close all
+
+
+addpath('Functions');
+% cluster analysis function arguments
+binlessopts.Dmeth = 'corrcoef';
+binlessopts.BLmeth = 'Gaussian';
+binlessopts.modopts = {{'sqEuclidean'},100};  % use 100 repetitions of k-means with Euclidean distance as basis for consensus
+binlessopts.BLpars = 1; % width of convolution window, in seconds (here SD of Gaussian)
+
+
+% Choose of the main folder
+%[file, path] = uigetfile;
+%main_folder = fullfile(path, file);
+
+main_folder = "C:\Users\javie\OneDrive\Escritorio\Datos\Original_Data";
+
+% Get the subfolders within the main folder
+folder = dir(main_folder);
+folder = folder(~ismember({folder.name}, {'.', '..'})); % Excluir '.' y '..'
+
+% Initiate the count and vectors
+file_count = 0;
+names = [];
+total_spks = [];
+max_time = 90; %[s]
+
+% The time step is 10^-i
+% Select i:
+i = 3;
+% Time step
+dt = 1*10^-i; %[s]
+
+% Create a figure
+figure;
+t = tiledlayout(2, 3, 'TileSpacing', 'compact', 'Padding', 'compact'); % Ajuste del diseño
+
+sgtitle('Base Similarity matrix');
+
+% Iterate over the subfolders inside the main folder
+for f = 1:length(folder)
+    % Subfolder path
+    folder_path = fullfile(main_folder, folder(f).name);
+    
+    % Get the files within the subfolders
+    file = dir(fullfile(folder_path, '*.mat'));
+
+    % Iterate over the files inside the subfolder
+    for a = 1:length(file)
+        spks_org = [];
+        % Add a file in the file count
+        file_count = file_count + 1;
+
+    %for a = 1:length(file)
+     % File path
+        file_path = fullfile(folder_path, file(a).name);
+
+        % Folder name
+        [~, name, ~] = fileparts(file(a).name);
+        of_name = string(folder(f).name) + ", " + name;
+        newname = string(folder(f).name) + "_" + name;    
+ 
+        file_name = string(file(a).name);
+
+        fprintf('Analyzing %s\n', file_name);
+        
+        
+        % Load the file
+        data = load(file_path);
+        data_spk = data.spks;
+        data_maxtime = data.file_length;
+        
+        % Get the time of application of the stimulus
+        data_stimtime = data.stim_time;
+        stim = sscanf(data_stimtime, '%d')*60; % Minutes to seconds conversion
+
+
+        % Crear y filtrar spks_reduced
+        spks = data_spk; % Copia de los datos originales
+        spks(spks(:, 2) < stim, :) = []; % Filtrar por tiempo mínimo
+        spks(spks(:, 2) > max_time + stim, :) = []; % Filtrar por tiempo máximo
+
+        % IDs of trains
+        allcellIDs = unique(spks(:,1));
+        nallIDs = numel(allcellIDs);
+
+        % fix start and end times of data-set to use
+        T = [stim, max_time + stim]; 
+    
+        % now restrict spike-times to that range
+        %thesespks = spks(spks(:,2) >= T(1) & spks(:,2) <= T(2),:);
+
+
+
+        %%%%%% now cluster %%%%%%%%%%%%%%%%%%%
+        consensus_cluster_spike_data_binless_mod(file_count, of_name, spks, allcellIDs,T,dt,binlessopts);
+
+
+
+    end
+end
+
+
+% Guardar la figura como imagen
+output_folder = 'C:\Users\javie\OneDrive\Escritorio\GitHub\Practica\TestFigures2\Similarity Matrix';
+
+% Crear la carpeta si no existe
+if ~exist(output_folder, 'dir')
+    mkdir(output_folder);
+end
+
+
+output_file = fullfile(output_folder, 'SM_Base.png');
+
+% Obtener las dimensiones de la pantalla
+screenSize = get(0, 'ScreenSize');
+
+% Establecer la ventana de la figura en pantalla completa
+set(gcf, 'Position', screenSize*0.8);
+exportgraphics(gcf, output_file, 'BackgroundColor', 'white');
+hold off;

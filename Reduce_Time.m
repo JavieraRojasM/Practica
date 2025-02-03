@@ -12,11 +12,11 @@ folder = dir(main_folder);
 folder = folder(~ismember({folder.name}, {'.', '..'})); % Excluir '.' y '..'
 
 % Initiate the count and vectors
-max_time = 90;
+max_time = 20;
 
 % Carpeta de salida
 new_folder = "C:\Users\javie\OneDrive\Escritorio\Datos";
-output_folder = fullfile(new_folder, "Reduced_Data");
+output_folder = fullfile(new_folder, "Reduced_Data_prueba");
 
 % Crear la carpeta "Reduced_Data" si no existe
 if ~exist(output_folder, 'dir')
@@ -46,6 +46,9 @@ for f = 1:length(folder)
         data = load(file_path);
         data_spk = data.spks;
         data_maxtime = data.file_length;
+        data_x = data.x;
+        data_y = data.y;
+
         
         % Get the time of application of the stimulus
         data_stimtime = data.stim_time;
@@ -59,10 +62,14 @@ for f = 1:length(folder)
         spks(spks(:, 2) < stim, :) = []; % Filtrar por tiempo mínimo
         spks(spks(:, 2) > max_time + stim, :) = []; % Filtrar por tiempo máximo
 
+        pos_x = data_x;
+        pos_y = data_y;
+        stim_time = data_stimtime;
+
         % Generar el nuevo nombre de archivo en la carpeta "TestData"
         output_file_path = fullfile(output_folder, newname + ".mat");
 
         % Guardar únicamente la variable spks_reduced en el archivo .mat
-        save(output_file_path, 'spks');
+        save(output_file_path, 'spks', 'pos_x', 'pos_y', 'stim_time');
     end
 end

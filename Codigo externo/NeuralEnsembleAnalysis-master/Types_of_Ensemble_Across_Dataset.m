@@ -78,6 +78,6 @@ toc
 %% save stuff
 clear G_dataset G_data Gcon_dataset DataTable Sxy_dataset ensembleRate neurondata 
 
-save('Ensemble_Types','Cmax','Ccon','Qmax','Qc','SxyData','dataset_spikes','dists','rpts','AcorrTypes')
+save('Ensemble_Types_reduced_data','Cmax','Ccon','Qmax','Qc','SxyData','dataset_spikes','dists','rpts','AcorrTypes')
 
 

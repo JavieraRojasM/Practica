@@ -1,6 +1,6 @@
 %%% script to analyse the clusterings of the data-set: clusters by neuron
 % Mark Humphries 31/10/2014
-load Analyses_Neurons_and_Groups
+load Analyses_Neurons_and_Groups_reduced_oficial
 
 M = 5; % marker size
 flag = '3'; % plotting flag

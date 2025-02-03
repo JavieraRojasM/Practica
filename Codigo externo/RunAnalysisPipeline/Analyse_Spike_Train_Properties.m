@@ -208,12 +208,20 @@ for iD = 1:numel(G_data)  % cycle over all data-sets
         
         % fit distribution models at ensemble level: pooled ISIs and pooled
         % CV2s across all member spike-trains
+
         [groupdata(GroupCtr).coeffs_isi,AICs,BICs,groupdata(GroupCtr).pAICs_isi,groupdata(GroupCtr).pBICs_isi,groupdata(GroupCtr).nlogL_isi] =  ...
             fitMLEdistribution(allisis(:,2),fits);
                
         cens_cv2 = allcv2; cens_cv2(allcv2(:,2) == 0,:) = []; 
         [groupdata(GroupCtr).coeffs_cv2s,AICs,BICs,groupdata(GroupCtr).pAICs_cv2s,groupdata(GroupCtr).pBICs_cv2s,groupdata(GroupCtr).nlogL_cv2s] = ...
-            fitMLEdistribution(cens_cv2(:,2),fits);      
+            fitMLEdistribution(cens_cv2(:,2),fits);    
+
+%         [groupdata(GroupCtr).coeffs_isi,AICs,BICs,groupdata(GroupCtr).pAICs_isi,groupdata(GroupCtr).pBICs_isi,groupdata(GroupCtr).nlogL_isi] =  ...
+%             fitMLEdistribution(allisis(:,2),fits);
+%                
+%         cens_cv2 = allcv2; cens_cv2(allcv2(:,2) == 0,:) = []; 
+%         [groupdata(GroupCtr).coeffs_cv2s,AICs,BICs,groupdata(GroupCtr).pAICs_cv2s,groupdata(GroupCtr).pBICs_cv2s,groupdata(GroupCtr).nlogL_cv2s] = ...
+%             fitMLEdistribution(cens_cv2(:,2),fits);      
         
 
         % whole ensemble auto-correlogram

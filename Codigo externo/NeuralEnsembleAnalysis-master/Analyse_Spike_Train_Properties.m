@@ -13,7 +13,7 @@
 %                that model's maximum likelihood fit to the CV2 distribution
 %   .pBICs_isis: the P(model) array for model-fits to that ISI distribution
 %   .pBICs_cv2s: the P(model) array for model-fits to that CV2 distribution
-%   .blnOscN: binary flag (0,1); 1 indicates a significant dip in the auto-correlogram   
+%   .blnOscN: binary flag (0,1); 1 indicates a significant dip in the auto-correlogram   "C:\Users\javie\OneDrive\Escritorio\Datos\Reduced_Data\"
 %   .blnOscP: binary flag (0,1); 1 indicates a significant peak in the auto-correlogram   
 %
 % Mark Humphries 16/6/2014
@@ -21,11 +21,15 @@ clear all; close all
 
 addpath Functions\  % add list of local functions to path
 
-datapath = 'TestData/';
+datapath = "C:\Users\javie\OneDrive\Escritorio\Datos\Reduced_Data\";
 
-load([datapath 'DataSet_ConsensusClustering_TEST.mat']) % set of clustered ensembles
+load([datapath + 'DataSet_ConsensusClustering_ReduceData.mat']) % set of clustered ensembles
 
-load([datapath 'DataList.mat']); % list of spike-train files
+% datapath = 'TestData/';
+% 
+% load([datapath 'DataSet_ConsensusClustering_TEST.mat']) % set of clustered ensembles
+
+load([datapath + 'DataList.mat']); % list of spike-train files
 
 % select here which clustering to use: replace these fields with your data
 % if using a different clustering technique
@@ -86,7 +90,7 @@ for iD = 1:numel(G_data)  % cycle over all data-sets
     GroupList = [GroupList; iD*ones(Ngrps(iD),1) (1:Ngrps(iD))'];
     
     % load spike-trains
-    load([datapath '\' DataList(iD).spikes]);
+    load([datapath + DataList(iD).spikes]);
      
     % do sorting by similarity - assumes similarity matrix is available:
     % comment out if it isn't
@@ -103,9 +107,9 @@ for iD = 1:numel(G_data)  % cycle over all data-sets
     T = [DataTable(iD,2) DataTable(iD,3)]; % time of each recording
 
     
-    hall = plot_clusters(spks,G_data{iD}.grps,Ngrps(iD),T,flag);  % plot in group order
-    title(['Data-set ' DataList(iD).spikes ' in group ID order (bottom-to-top)'])
-    
+%     hall = plot_clusters(spks,G_data{iD}.grps,Ngrps(iD),T,flag);  % plot in group order
+%     title(['Data-set ' DataList(iD).spikes ' in group ID order (bottom-to-top)'])
+%     
 %    first just get ISI stats for whole recording
     IDs = unique(spks(:,1)); nIDs = numel(IDs);
     allisis = [];
@@ -129,7 +133,8 @@ for iD = 1:numel(G_data)  % cycle over all data-sets
         groupdata(GroupCtr).IDs = thisgrp;
         
         allisis = []; allcv2 = [];         
-        
+       
+        %%%%
         % per neuron
         for i = 1:nGrpIDs
             i
@@ -144,23 +149,25 @@ for iD = 1:numel(G_data)  % cycle over all data-sets
             
             neurondata(NeuronCtr).isis = diff(ts); 
             allisis = [allisis; ts(1:end-1) neurondata(NeuronCtr).isis]; % store for ensemble-level analysis
-                        
-            if numel(neurondata(NeuronCtr).isis) > 2
-                 % MLE fits to isis                 
-                [neurondata(NeuronCtr).coeffs_isi,AICs,BICs,neurondata(NeuronCtr).pAICs_isi,neurondata(NeuronCtr).pBICs_isi,neurondata(NeuronCtr).nlogL_isi] =  ...
-                    fitMLEdistribution(neurondata(NeuronCtr).isis,fits);
-
-                % CV2 of ISIs
-                neurondata(NeuronCtr).cv2s = 2 * abs(neurondata(NeuronCtr).isis(1:end-1) - neurondata(NeuronCtr).isis(2:end)) ./ (neurondata(NeuronCtr).isis(1:end-1)+neurondata(NeuronCtr).isis(2:end));
-                CV2_ISI(i) = mean(neurondata(NeuronCtr).cv2s);
-                allcv2 = [allcv2; ts(2:end-1) neurondata(NeuronCtr).cv2s];  % store for ensemble-level analysis
                 
-                % MLE fits to cv2s
-                cv2s_cens = neurondata(NeuronCtr).cv2s; ixCens = find(cv2s_cens <=0); cv2s_cens(ixCens) = [];
-                    
-                [neurondata(NeuronCtr).coeffs_cv2s,AICs,BICs,neurondata(NeuronCtr).pAICs_cv2s,neurondata(NeuronCtr).pBICs_cv2s,neurondata(NeuronCtr).nlogL_cv2s] ...
-                    = fitMLEdistribution(cv2s_cens,fits);
-                
+%%%
+        
+%             if numel(neurondata(NeuronCtr).isis) > 2
+%                  % MLE fits to isis                 
+%                 [neurondata(NeuronCtr).coeffs_isi,AICs,BICs,neurondata(NeuronCtr).pAICs_isi,neurondata(NeuronCtr).pBICs_isi,neurondata(NeuronCtr).nlogL_isi] =  ...
+%                     fitMLEdistribution(neurondata(NeuronCtr).isis,fits);
+% 
+%                 % CV2 of ISIs
+%                 neurondata(NeuronCtr).cv2s = 2 * abs(neurondata(NeuronCtr).isis(1:end-1) - neurondata(NeuronCtr).isis(2:end)) ./ (neurondata(NeuronCtr).isis(1:end-1)+neurondata(NeuronCtr).isis(2:end));
+%                 CV2_ISI(i) = mean(neurondata(NeuronCtr).cv2s);
+%                 allcv2 = [allcv2; ts(2:end-1) neurondata(NeuronCtr).cv2s];  % store for ensemble-level analysis
+%                 
+%                 % MLE fits to cv2s
+%                 cv2s_cens = neurondata(NeuronCtr).cv2s; ixCens = find(cv2s_cens <=0); cv2s_cens(ixCens) = [];
+%                     
+%                 [neurondata(NeuronCtr).coeffs_cv2s,AICs,BICs,neurondata(NeuronCtr).pAICs_cv2s,neurondata(NeuronCtr).pBICs_cv2s,neurondata(NeuronCtr).nlogL_cv2s] ...
+%                     = fitMLEdistribution(cv2s_cens,fits);
+%%%                
                 % oscillatory activity
 
                 % auto-correlogram
@@ -198,23 +205,18 @@ for iD = 1:numel(G_data)  % cycle over all data-sets
                     neurondata(NeuronCtr).blnOscP = 0;
                 end
                 
-            else
-                % total silence....
-                % probably need to fill in some blanks here...    
-                
-            end  % end check for enough ISIs...
         end     % end loop over spike-trains
         
-        
+        %%%%%
         % fit distribution models at ensemble level: pooled ISIs and pooled
         % CV2s across all member spike-trains
-        [groupdata(GroupCtr).coeffs_isi,AICs,BICs,groupdata(GroupCtr).pAICs_isi,groupdata(GroupCtr).pBICs_isi,groupdata(GroupCtr).nlogL_isi] =  ...
-            fitMLEdistribution(allisis(:,2),fits);
-               
-        cens_cv2 = allcv2; cens_cv2(allcv2(:,2) == 0,:) = []; 
-        [groupdata(GroupCtr).coeffs_cv2s,AICs,BICs,groupdata(GroupCtr).pAICs_cv2s,groupdata(GroupCtr).pBICs_cv2s,groupdata(GroupCtr).nlogL_cv2s] = ...
-            fitMLEdistribution(cens_cv2(:,2),fits);      
-        
+%         [groupdata(GroupCtr).coeffs_isi,AICs,BICs,groupdata(GroupCtr).pAICs_isi,groupdata(GroupCtr).pBICs_isi,groupdata(GroupCtr).nlogL_isi] =  ...
+%             fitMLEdistribution(allisis(:,2),fits);
+%                
+%         cens_cv2 = allcv2; cens_cv2(allcv2(:,2) == 0,:) = []; 
+%         [groupdata(GroupCtr).coeffs_cv2s,AICs,BICs,groupdata(GroupCtr).pAICs_cv2s,groupdata(GroupCtr).pBICs_cv2s,groupdata(GroupCtr).nlogL_cv2s] = ...
+%             fitMLEdistribution(cens_cv2(:,2),fits);      
+%         
 
         % whole ensemble auto-correlogram
         allts = sort(allisis(:,1));
@@ -251,5 +253,5 @@ toc
 
 %% SAVE ANALYSES
 clear Sxy_dataset Cxy_spread_dataset Gcon_dataset G_dataset NetworkCxy_dataset stateDt_dataset binlessopts
-save(['Analyses_Neurons_and_Groups'],'neurondata','groupdata','GroupList');
+save(['Analyses_Neurons_and_Groups_RD'],'neurondata','groupdata','GroupList');
 

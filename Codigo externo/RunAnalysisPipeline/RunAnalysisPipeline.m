@@ -20,7 +20,7 @@ addpath ConsensusComunityDetectionToolbox\
 % Check all data-files in the "TestData" directory for clarification
 
 % path to folder with data-files
-datapath = 'TestData'; 
+datapath = 'C:\Users\javie\OneDrive\Escritorio\Datos\Reduced_Data\'; 
 
 load([datapath '\DataList']);  % list of all data-sets: struct with fields for spike-timing file and neuron position file
 nfiles = size(DataList,2);

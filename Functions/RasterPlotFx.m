@@ -1,75 +1,50 @@
 function matriz_spks = RasterPlotFx(data_spk, data_maxtime, dt, data_mintime)
-    % This function creates the binary spike matrix
-        % spike -> 1 ; no spike -> 0
-
-    if nargin < 4 
-        data_mintime = 0; 
+    % Esta función crea la matriz binaria de spikes
+    % spike -> 1; no spike -> 0
+    
+    if nargin < 4
+        data_mintime = 0; % Tiempo mínimo predeterminado
     end
-  
-    % Get the total of spikes
-    %row = size(data_spk,1);
-        
-    % Get the total of neurons
-    n_neuron = data_spk(end,1);
-        
-    % Get the maximun time
+    
+    % Obtener el número total de neuronas
+    n_neuron = data_spk(end, 1);
+    
+    % Convertir `data_maxtime` a segundos si es una cadena o número
     if ischar(data_maxtime) || isstring(data_maxtime)
-        maxtime = sscanf(data_maxtime, '%d')*60; % Minutes to seconds conversion
-
+        maxtime = sscanf(data_maxtime, '%d') * 60; % Convertir minutos a segundos
     elseif isnumeric(data_maxtime)
         maxtime = data_maxtime;
-
     end
-       
-    min_time = floor(data_mintime)
-    % Get the total time nodes
-    max_time = ceil(maxtime)
     
-    matrix_time = (max_time - min_time)/dt
-
-    % Initiate the spikes matrix
+    % Ajustar los tiempos mínimo y máximo al intervalo
+    min_time = floor(data_mintime);
+    max_time = ceil(maxtime);
+    matrix_time = ceil((max_time - min_time) / dt);
+    
+    % Inicializar la matriz binaria de spikes
     matrix = zeros(n_neuron, matrix_time);
-    size(matrix)    
-
-    % Iterate between neuron
     
-    row = 1   
-%     for row = 1:size(data_spk,1)
-%         row
-for n = 1:n_neuron
-    n
-    time = min_time;
-    
-    while data_spk(row,1) == n
-        row
-        data_spk(row,1);
+    % Iterar sobre las filas de `data_spk`
+    row = 1;
+    while row <= size(data_spk, 1)
+        neuron_id = data_spk(row, 1);  % Obtener el ID de la neurona
+        spike_time = data_spk(row, 2);  % Tiempo del spike
         
-
-        while time < max_time
-            for t = 1:size(matrix, 2)
-               
-                % If the time of the spike (data) is the time of the node,
-                % the matrix goes from 0 to 1
-                if abs(data_spk(row,2) - time) < dt
-                    %n_neuron2 = data_spk(n,1);
-                    matrix(data_spk(row,1), t) = 1;
-                    %break;
-                end
-                time = time + dt;
-
+        % Calcular el índice de tiempo correspondiente al spike
+        t_index = floor((spike_time - min_time) / dt) + 1;
+        
+        % Verificar si el índice está dentro de los límites de la matriz
+        if t_index > 0 && t_index <= matrix_time
+            % Actualizar la matriz si aún no se marcó
+            if matrix(neuron_id, t_index) == 0
+                matrix(neuron_id, t_index) = 1;
             end
-            %break
         end
+        
+        % Avanzar a la siguiente fila de `data_spk`
         row = row + 1;
-        if row > size(data_spk, 1)
-            break
-        end
-        %break
     end
-end
-
-
-    % Return the binary matrix with the spikes
+    
+    % Devolver la matriz binaria con los spikes
     matriz_spks = matrix;
-
 end

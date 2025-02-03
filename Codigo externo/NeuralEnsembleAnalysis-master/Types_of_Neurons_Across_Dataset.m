@@ -1,6 +1,6 @@
 %%% script to analyse the clusterings of the data-set: clusters by neuron
 % Mark Humphries 31/10/2014
-load Analyses_Neurons_and_Groups
+load Analyses_Neurons_and_Groups_RD
 
 M = 5; % marker size
 flag = '3'; % plotting flag
@@ -63,5 +63,5 @@ dataset_spikes(Ccon_neuron.Spikes == ixSize(1),:) % check out in size order
 %% save stuff
 
 clear G_dataset G_data Gcon_dataset DataTable Sxy_dataset
-save('Neuron_Types2','Cneuron','Ccon_neuron','Qneuron','Qc_neuron','SxyData','dataset_spikes',...
+save('Neuron_Types_RD_OF','Cneuron','Ccon_neuron','Qneuron','Qc_neuron','SxyData','dataset_spikes',...
     'dists','rpts','minSpks') 

@@ -34,8 +34,8 @@
 %               .map_Dindex : mean discreteness score for that permuted map
 %
 % Mark Humphries 16/6/2014
-datapath = 'TestData/'
-load([datapath '\DataList']);  % list of all data-sets: first column is spike-timing file, second column is neuron position file
+datapath = "C:\Users\javie\OneDrive\Escritorio\Datos\Reduced_Data"
+load([datapath  + '\DataList']);  % list of all data-sets: first column is spike-timing file, second column is neuron position file
 nfiles = size(DataList,2);
 
 load Dataset_ConsensusClustering Gcon_dataset        % load clusterings of each dataset

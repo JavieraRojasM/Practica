@@ -80,7 +80,7 @@ y = hist(diffT(abs(diffT)<=max_lag),bins);        % bin time-differences accordi
 
 %keyboard
 
-% y = y - (num_spikes1 * num_spikes2)/numel(bins);
+ y = y - (num_spikes1 * num_spikes2)/numel(bins);
 % % ycov = y - (f1*f2);
 % % ynorm = y ./ ((time_seconds - abs(bins)) .* sqrt(f1*f2));
 
