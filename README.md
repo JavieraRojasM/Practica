@@ -32,7 +32,7 @@ To run this script, ensure you have:
   3. **Pie plot of neuron types**
   4. **Cosine similarity matrix (before reorganization)**
   5. **Cosine similarity matrix (after reorganization)**
-  6. **MEan**
+  6. **Mean Similarity**
   7. **Raster plot with reorganized neurons**
   8. **Position plot of neurons by dataset**
   9. **Mean spikes normalized by the number of neurons**
