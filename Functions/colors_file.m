@@ -4,7 +4,6 @@ colors.type = [
     [52, 152, 219] / 255;   % Oscillator
     [243, 156, 18] / 255;   % Burster
     [142, 68, 173] / 255    % Pausers (Morado)
-    [189, 195, 199] / 255   % No info (Gris)
     ];
         
 colors.age = [
