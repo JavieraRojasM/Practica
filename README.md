@@ -19,7 +19,10 @@ To run this script, ensure you have:
 - The following parameters are **customizable**:
   - **Maximum recording time**  
   - **Time step**  
-  - **Bin size**  
+  - **Bin size**
+  - **Maximum lag for correlation analysis**
+  - **Number of permutations for statistical testing**
+  - **Upper and Lower threshold for statistical significance**
 
 ## Output
 - Processed data and results are saved in an output directory called `Figures_folder`.
