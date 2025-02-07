@@ -16,6 +16,11 @@ figure;
 t = tiledlayout(2, 3, 'TileSpacing', 'compact', 'Padding', 'compact');  
 sgtitle(sprintf('Similarity matrix reorganized by type of neuron%s', file_name), 'FontSize', 14, 'FontWeight', 'bold');
 
+% Initiate vectors
+mean_similarity = [];   % Vector for the mean similarity
+names = [];
+file_count = 0;         % Counter for files
+
 % Iterate over the subfolders inside the main folder
 for f = 1:length(folder)
     % Get the full path to the subfolder
@@ -31,13 +36,27 @@ for f = 1:length(folder)
         % Get the file path
         file_path = fullfile(folder_path, file(a).name);
 
+        
         % Folder and file names
         [~, name, ~] = fileparts(file(a).name);
         of_name = string(folder(f).name) + ", " + name;
         newname = string(folder(f).name) + "_" + name;    
+        names = [names, of_name];
 
         file_name = string(file(a).name);
         
+        % Increment file count for each file processed
+        file_count = file_count + 1;
+
+        % Create color vector for bar plot
+        if strcmp(folder(f).name, 'Juvenile')
+            colors_bar(file_count, :) = colors.age(1, :); % Color for "juvenile"
+        
+        elseif strcmp(folder(f).name, 'Old')
+            colors_bar(file_count, :) = colors.age(2, :); % Color for "old"
+        end
+
+
         % Load the .mat file containing spike data
         data = load(file_path);
         data_spk = data.spks;  % Extract spike data
@@ -94,9 +113,9 @@ for f = 1:length(folder)
         time_series = nan(num_neurons, max_time_points); 
         
         % Fill the time series matrix with the spike times for each neuron
-        for i = 1:num_neurons
-            times = spks(spks(:,1) == neurons(i), 2);   % Get spike times for each neuron
-            time_series(i, 1:length(times)) = times;    % Store spike times in the matrix
+        for nm = 1:num_neurons
+            times = spks(spks(:,1) == neurons(nm), 2);   % Get spike times for each neuron
+            time_series(nm, 1:length(times)) = times;    % Store spike times in the matrix
         end
         
         % Replace NaN values with zeros before further processing
@@ -111,10 +130,10 @@ for f = 1:length(folder)
         % Set the diagonal of the similarity matrix to zero (no self-similarity)
         similarity_matrix(eye(size(similarity_matrix)) == 1) = 0;
 
-        mean_similarity = mean(mean(similarity_matrix));
+        mean_similarity_dataset = mean(mean(similarity_matrix));
 
-        % Display the mean similarity for the current file
-        fprintf('Mean similarity of %s: %d\n', of_name, mean_similarity); 
+        mean_similarity = [mean_similarity, mean_similarity_dataset];
+
 
         % Visualize the cosine similarity matrix
         nexttile;
@@ -135,7 +154,7 @@ if ~exist(output_folder, 'dir')
 end
 
 % Define the output file path and name
-output_file = fullfile(output_folder, 'CSM_reorganized.png');  
+output_file = fullfile(output_folder, 'Cosine_SM_reorganized.png');  
 
 % Get the screen dimensions
 screenSize = get(0, 'ScreenSize'); 
@@ -147,3 +166,38 @@ set(gcf, 'Position', screenSize);
 exportgraphics(gcf, output_file, 'BackgroundColor', 'white');
 
 hold off;
+
+% Bar plot
+figure;
+hold on 
+for b = 1:length(mean_similarity)
+    bar(bars(b), mean_similarity(b), 'FaceColor', colors_bar(b, :));
+    %text(bars(b), mean_similarity(b), num2str(mean_similarity(b)), ...
+        %'HorizontalAlignment', 'center', 'VerticalAlignment', 'bottom', 'FontSize', 10);
+end
+
+ylabel('Mean similarity');
+title('Mean Similarity', 'FontSize', 14, 'FontWeight', 'bold');
+xticks(bars);           % Bar location
+xticklabels(names);     % Bar tag
+rounded_up_yMax = max(mean_similarity);
+ylim([0, rounded_up_yMax + 0.1]);
+grid on;
+
+
+%% Save the figure as an image
+
+% Define the output file path and name
+output_file = fullfile(output_folder, 'Mean_similarity.png');  
+
+% Get the screen dimensions
+screenSize = get(0, 'ScreenSize'); 
+
+% Set the figure window to half full screen
+set(gcf, 'Position', screenSize/2);  
+
+% Export the figure to the specified output file with a white background
+exportgraphics(gcf, output_file, 'BackgroundColor', 'white');
+
+hold off;
+

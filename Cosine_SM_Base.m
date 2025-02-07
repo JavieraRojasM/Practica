@@ -61,9 +61,9 @@ for f = 1:length(folder)
         time_series = nan(num_neurons, max_time_points);  % Initialize matrix with NaN
         
         % Fill the time series matrix with the spike times for each neuron
-        for i = 1:num_neurons
-            times = spks(spks(:,1) == neurons(i), 2);   % Get spike times for each neuron
-            time_series(i, 1:length(times)) = times;    % Store spike times in the matrix
+        for nm = 1:num_neurons
+            times = spks(spks(:,1) == neurons(nm), 2);   % Get spike times for each neuron
+            time_series(nm, 1:length(times)) = times;    % Store spike times in the matrix
         end
         
         % Replace NaN values with zeros before further processing
@@ -97,7 +97,7 @@ if ~exist(output_folder, 'dir')
 end
 
 % Define the output file path and name
-output_file = fullfile(output_folder, 'CSM_base.png');  
+output_file = fullfile(output_folder, 'Cosine_SM_base.png');  
 
 % Get the screen dimensions
 screenSize = get(0, 'ScreenSize'); 

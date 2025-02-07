@@ -9,8 +9,8 @@
 clear
 close all  
 
-load("colors.mat")      % Load color settings for plots
 addpath('Functions');   % Add a folder containing necessary functions to the path
+load("colors.mat")      % Load color settings for plots
 
 
 % Choose the main folder that contains the folders for both 'Juvenile' and 'Old' datasets
@@ -87,6 +87,3 @@ dt = 1*10^-i;   %[s] Time step
 % Plots the number of spikes normalized by the number of neurons throughout
 % the time of the experiment
 Mean_spikes_normalized
-
-% Calculate the average spike train for all neurons across datasets  
-Global_average_spike_rate
