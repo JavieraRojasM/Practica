@@ -26,16 +26,17 @@ To run this script, ensure you have:
 
 ## Output
 - Processed data and results are saved in an output directory called `Figures_folder`.
-- Inside, you will find **nine images** corresponding to different aspects of the analysis for each dataset:
+- Inside, you will find **ten images** corresponding to different aspects of the analysis for each dataset:
   1. **Total neurons**
   2. **Raster plot**
   3. **Pie plot of neuron types**
   4. **Cosine similarity matrix (before reorganization)**
   5. **Cosine similarity matrix (after reorganization)**
-  6. **Raster plot with reorganized neurons**
-  7. **Position plot of neurons by dataset**
-  8. **Mean spikes normalized by the number of neurons**
-  9. **Global average spike rate**
+  6. **MEan**
+  7. **Raster plot with reorganized neurons**
+  8. **Position plot of neurons by dataset**
+  9. **Mean spikes normalized by the number of neurons**
+  10. **Global average spike rate**
  
 
 ## Usage
