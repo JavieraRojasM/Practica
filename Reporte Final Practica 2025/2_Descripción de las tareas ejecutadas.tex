@@ -1,0 +1,15 @@
+\section{Descripción de la(s) tarea(s) ejecutadas durante la PPII}
+
+
+Se inicia con una búsqueda bibliográfica sobre estudios similares tanto en mamíferos como en \textit{Aplysia}, de la cual se identifican experimentos similares en ratas, donde las principales conclusiones indican que, con la edad, ocurre una pérdida de densidad sináptica \cite{bib perdida sinaptica}, un aumento de la cantidad de neuronas con patrones de disparo tipo burst \cite{bib burst}, un aumento de la conductancia de calcio en canales dependientes de voltaje \cite{bib Ca}, facilitando la generación de spikes y, finalmente, una reducción en la conductancia de potasio en canales dependientes de voltaje \cite{bib Potasio}, lo que prolonga la duración del spike.\\
+
+Por otra parte, en \textit{Aplysia} se ha observado una relación entre el envejecimiento conductual y la disminución de la excitabilidad en las neuronas sensoriales \cite{bib sensoriales}, además de una reducción en la cantidad de spikes y un aumento en su duración sin cambio en el intervalo existente entre spikes \cite{bib cantidad}.\\
+
+Luego de la búsqueda bibliográfica, se realiza un análisis estadístico neuronal estándar, donde se reduce el tiempo de grabación a un máximo de 90 segundos tras la aplicación del estímulo y se grafica, por grupo etario, el total de neuronas, los Raster plot correspondientes y el promedio global de spikes por tiempo y por neurona.\\
+
+En neuronciencia, los Raster plot son gráficos ampliamente utiliados para visualizar la actividad neuronal en el tiempo. Cada línea horizontal representa una neurona y las marcas indican los momentos en que ocurren los spikes. Este tipo de gráfico permite identificar patrones de activación, sincronización entre neuronas y respuestas a estímulos de forma clara y concisa.\\
+
+
+Luego de este primer análisis estadístico, se propone como hipótesis que la diferencia entre la actividad neuronal de los dos grupos etarios radica en la cantidad de neuronas que tienen un patrón de disparo similar, por lo que se propone como metodología realizar un análisis similar al propuesto en el paper \textit{``Modular Deconstruction Reveals the Dynamical and Physical Building Blocks of a Locomotion Motor Program''} \cite{AMB} publicado en 2015, para clasificar las neuronas según su patrón de disparo. La clasificación se basa en la correlación cruzada de los spikes train discretizados junto con una prueba de permutación. \\
+
+Con las neuronas clasificadas según su tipo de disparo, se analiza la cantidad de neuronas de cada tipo utilizando un gráfico circular. Además, se grafica la matriz de similitud del coseno antes y después de la clasificación para comprobar el éxito del agrupamiento. Posteriormente, se generan nuevamente los raster plots, esta vez con las neuronas agrupadas por tipo, y finalmente, se realiza un gráfico de posición donde cada tipo de neurona se representa con un color diferente.\\
